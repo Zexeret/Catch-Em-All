@@ -31,6 +31,8 @@ export class BaseSprite {
 
   move(dir: MovementKeyValues) {
     switch (dir) {
+      case MovementKeyValues.NONE:
+        break;
       case MovementKeyValues.UP:
         this.#moveUp();
         break;
@@ -95,12 +97,12 @@ export class Sprite extends BaseSprite {
   }
 
   draw() {
-    const img = this.playerConfig.sprites
+    this.image = this.playerConfig.sprites
       ? this.playerConfig.sprites[this.playerConfig.lastDirection]
       : this.image;
 
     canvasCtx.drawImage(
-      img,
+      this.image,
       this.playerConfig.moving
         ? this.playerConfig.currentFrameNumber * this.width
         : 0,

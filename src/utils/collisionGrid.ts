@@ -161,7 +161,8 @@ export const checkCollision = (rect1: Sprite, rect2: BaseSprite) => {
     rect1.position.x + Boundary.boundaryWidth >= rect2.position.x;
 
   const checkTopCollision =
-    rect1.position.y <= rect2.position.y + Boundary.boundaryHeight;
+    rect1.position.y + (2 * rect1.height) / 3 <=
+    rect2.position.y + Boundary.boundaryHeight;
   const checkDownCollision =
     rect1.position.y + rect1.height >= rect2.position.y;
 

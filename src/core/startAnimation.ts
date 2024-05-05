@@ -1,9 +1,11 @@
+import { generateBattleZoneMap } from "../utils/battleZone";
 import { checkCollision, generateCollisionMap } from "../utils/collisionGrid";
+import { POKEMON_COLLISION_PERCENTAGE } from "../utils/constants";
 import {
   MovementKeyValues,
   lastPressedMovementKey,
 } from "../utils/movementUtils";
-import { Coordinates } from "./classes";
+import { Boundary, Coordinates, Sprite } from "./classes";
 import { loadSprites } from "./loadSprite";
 import { startEventListeners } from "./startEventListeners";
 
@@ -18,13 +20,21 @@ export const startAnimation = () => {
   const { townMap, foreGroundSprite, playerDownSprite } =
     loadSprites(map_offset);
   const collisionMapBoundary = generateCollisionMap(map_offset);
+  const battleZoneMapBoundary = generateBattleZoneMap(map_offset);
 
   startEventListeners();
 
-  const movables = [townMap, ...collisionMapBoundary, foreGroundSprite];
+  const movables: Array<Sprite | Boundary> = [
+    townMap,
+    ...collisionMapBoundary,
+    foreGroundSprite,
+    ...battleZoneMapBoundary,
+  ];
 
   const renderMovable = (direction: MovementKeyValues) => {
     let moving = true;
+    if (direction === MovementKeyValues.NONE) return;
+
     for (let i = 0; i < collisionMapBoundary.length; i++) {
       const futureBoundary = collisionMapBoundary[i].clone();
       futureBoundary.move(direction);
@@ -37,6 +47,16 @@ export const startAnimation = () => {
       movables.forEach((movable) => {
         movable.move(direction);
       });
+
+      for (let i = 0; i < battleZoneMapBoundary.length; i++) {
+        if (
+          checkCollision(playerDownSprite, battleZoneMapBoundary[i]) &&
+          Math.random() * 100 < POKEMON_COLLISION_PERCENTAGE
+        ) {
+          console.log("Battle Zone Activation");
+          break;
+        }
+      }
     }
   };
 
@@ -53,9 +73,12 @@ export const startAnimation = () => {
     foreGroundSprite.draw();
 
     // Uncomment during development only
-    // collisionMapBoundary.forEach((boundary) => {
-    //   boundary.draw();
-    // });
+    collisionMapBoundary.forEach((boundary) => {
+      boundary.draw();
+    });
+    battleZoneMapBoundary.forEach((boundary) => {
+      boundary.draw();
+    });
 
     renderMovable(directionKeyPressed);
   };
