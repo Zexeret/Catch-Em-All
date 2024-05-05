@@ -1,7 +1,6 @@
-body{
+body {
     background-color: black;
+    margin: 0;
 }
 
-#myCanvas{
-
-}
+#myCanvas {}
