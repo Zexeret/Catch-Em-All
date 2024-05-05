@@ -16,6 +16,15 @@ export const loadSprites = (map_offset: Coordinates): LoadSpritesReturnType => {
   const playerDownImg = new Image();
   playerDownImg.src = "../src/assets/images/playerDown.png";
 
+  const playerUpImg = new Image();
+  playerUpImg.src = "../src/assets/images/playerUp.png";
+
+  const playerLeftImg = new Image();
+  playerLeftImg.src = "../src/assets/images/playerLeft.png";
+
+  const playerRightImg = new Image();
+  playerRightImg.src = "../src/assets/images/playerRight.png";
+
   const foregroundImg = new Image();
   foregroundImg.src = "../src/assets/images/foreground.png";
 
@@ -30,8 +39,15 @@ export const loadSprites = (map_offset: Coordinates): LoadSpritesReturnType => {
       x: CANVAS_WIDTH / 2 - playerDownImg.width / 4 / 2,
       y: CANVAS_HEIGHT / 2 - playerDownImg.height / 4 / 2,
     },
-    frame: {
+    playerConfig: {
       frameCount: 4,
+      sprites: {
+        UP: playerUpImg,
+        DOWN: playerDownImg,
+        LEFT: playerLeftImg,
+        RIGHT: playerRightImg,
+        "": playerDownImg,
+      },
     },
     velocity: WALK_VELOCITY,
   });

@@ -9,6 +9,11 @@ export type Coordinates = {
 
 type PlayerSpriteConfig = {
   frameCount: number;
+  currentFrameNumber?: number;
+  elapsed?: number;
+  sprites?: Record<MovementKeyValues, HTMLImageElement>;
+  moving?: boolean;
+  lastDirection?: MovementKeyValues;
 };
 
 type BaseSpritePropsType = {
@@ -58,12 +63,12 @@ export class BaseSprite {
 type SpriteConstructorPropsType = {
   image: HTMLImageElement;
   position: Coordinates;
-  frame?: PlayerSpriteConfig;
+  playerConfig?: PlayerSpriteConfig;
   velocity: number;
 };
 export class Sprite extends BaseSprite {
   image: HTMLImageElement;
-  frame: PlayerSpriteConfig;
+  playerConfig: PlayerSpriteConfig;
   width: number;
   height: number;
 
@@ -71,22 +76,34 @@ export class Sprite extends BaseSprite {
     image,
     position,
     velocity,
-    frame = { frameCount: 1 },
+    playerConfig = { frameCount: 1 },
   }: SpriteConstructorPropsType) {
     super({ position, velocity });
     this.image = image;
-    this.frame = frame;
+    this.playerConfig = {
+      ...playerConfig,
+      currentFrameNumber: 0,
+      elapsed: 0,
+      moving: false,
+      lastDirection: MovementKeyValues.DOWN,
+    };
 
     this.image.onload = () => {
-      this.width = image.width / frame.frameCount;
+      this.width = image.width / playerConfig.frameCount;
       this.height = image.height;
     };
   }
 
   draw() {
+    const img = this.playerConfig.sprites
+      ? this.playerConfig.sprites[this.playerConfig.lastDirection]
+      : this.image;
+
     canvasCtx.drawImage(
-      this.image,
-      0,
+      img,
+      this.playerConfig.moving
+        ? this.playerConfig.currentFrameNumber * this.width
+        : 0,
       0,
       this.width,
       this.height,
@@ -95,6 +112,16 @@ export class Sprite extends BaseSprite {
       this.width,
       this.height
     );
+
+    if (!this.playerConfig.moving) return;
+
+    if (this.playerConfig.frameCount > 1) this.playerConfig.elapsed++;
+
+    if (this.playerConfig.elapsed % 6 === 0) {
+      this.playerConfig.currentFrameNumber =
+        (this.playerConfig.currentFrameNumber + 1) %
+        this.playerConfig.frameCount;
+    }
   }
 
   clone() {
@@ -102,7 +129,7 @@ export class Sprite extends BaseSprite {
       image: this.image,
       position: this.position,
       velocity: this.velocity,
-      frame: this.frame,
+      playerConfig: this.playerConfig,
     });
   }
 }
