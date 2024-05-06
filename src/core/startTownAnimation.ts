@@ -1,28 +1,34 @@
+import { AnimateOnCanvas } from "../utils/animate";
 import { generateBattleZoneMap } from "../utils/battleZone";
 import { checkCollision, generateCollisionMap } from "../utils/collisionGrid";
-import { POKEMON_COLLISION_PERCENTAGE } from "../utils/constants";
+import {
+  BATTLE_SCREEN_ACTIVATION_TIME,
+  FPS,
+  POKEMON_COLLISION_PERCENTAGE,
+} from "../utils/constants";
 import {
   MovementKeyValues,
   lastPressedMovementKey,
 } from "../utils/movementUtils";
 import { Boundary, Coordinates, Sprite } from "./classes";
-import { loadSprites } from "./loadSprite";
+import { resetCanvasDraw } from "./canvas";
+import { getSprites, loadSprites } from "./loadSprite";
 import { startEventListeners } from "./startEventListeners";
+import { startBattleAnimation } from "./startBattleAnimation";
 
-const FPS = 60;
+export let resumeTownAnimation: () => void;
 
-export const startAnimation = () => {
+export const startTownAnimation = () => {
   const map_offset: Coordinates = {
     x: -740,
     y: -590,
   };
+  const canvasCover = document.getElementById("canvasCover");
 
-  const { townMap, foreGroundSprite, playerDownSprite } =
-    loadSprites(map_offset);
+  loadSprites(map_offset);
+  const { townMap, foreGroundSprite, playerDownSprite } = getSprites();
   const collisionMapBoundary = generateCollisionMap(map_offset);
   const battleZoneMapBoundary = generateBattleZoneMap(map_offset);
-
-  startEventListeners();
 
   const movables: Array<Sprite | Boundary> = [
     townMap,
@@ -54,13 +60,22 @@ export const startAnimation = () => {
           Math.random() * 100 < POKEMON_COLLISION_PERCENTAGE
         ) {
           console.log("Battle Zone Activation");
+          townAnimationController.stopAnimationRender();
+          canvasCover.classList.add("flashAnimation");
+
+          // 2 seconds because thats the duration of our screen flashing animation
+          setTimeout(() => {
+            canvasCover.classList.remove("flashAnimation");
+            resetCanvasDraw();
+            startBattleAnimation();
+          }, BATTLE_SCREEN_ACTIVATION_TIME);
           break;
         }
       }
     }
   };
 
-  const drawCanvas = () => {
+  const drawTownMap = () => {
     const directionKeyPressed = lastPressedMovementKey.slice(-1)[0];
     if (directionKeyPressed)
       playerDownSprite.playerConfig.lastDirection = directionKeyPressed;
@@ -83,33 +98,10 @@ export const startAnimation = () => {
     renderMovable(directionKeyPressed);
   };
 
-  const animate = () => {
-    let now = Date.now();
-    let elapsed = now - then;
-    count++;
+  const townAnimationController = new AnimateOnCanvas(FPS, drawTownMap);
 
-    // if ((now - startTime) / 1000 > 1) {
-    //   console.log("Your System's Frame Rate", count);
-    //   startTime = now;
-    //   count = 0;
-    // }
-
-    // if enough time has elapsed, draw the next frame
-    if (elapsed > fpsInterval) {
-      // Get ready for next frame by setting then=now, but...
-      // Also, adjust for fpsInterval not being multiple of 16.67
-      then = now - (elapsed % fpsInterval);
-
-      //draw
-      drawCanvas();
-    }
-    window.requestAnimationFrame(animate);
+  const resumeAnimation = () => {
+    townAnimationController.startAnimationRender();
   };
-
-  const fpsInterval = 1000 / FPS;
-  let startTime = Date.now();
-  let count = 0;
-  let then = Date.now();
-
-  animate();
+  resumeTownAnimation = resumeAnimation;
 };

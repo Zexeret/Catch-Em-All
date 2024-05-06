@@ -3,4 +3,34 @@ body {
     margin: 0;
 }
 
-#myCanvas {}
+#canvasCover {
+    display: inline-block;
+}
+
+.flashAnimation {
+    /* animation: name duration timing-function delay iteration-count direction fill-mode; */
+    animation-name: screenFlash;
+    animation-duration: 2s;
+    animation-timing-function: cubic-bezier(.4, .97, .91, .75);
+    animation-delay: 0s;
+    animation-iteration-count: 1;
+    animation-direction: normal;
+    animation-fill-mode: forwards;
+}
+
+@keyframes screenFlash {
+
+    0%,
+    10%,
+    20%,
+    40% {
+        opacity: 1;
+    }
+
+    5%,
+    15%,
+    25%,
+    100% {
+        opacity: 0;
+    }
+}

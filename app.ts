@@ -1,5 +1,9 @@
-import { initiateCanvas, startAnimation } from "./src/core";
+import {
+  initiateCanvas,
+  startEventListeners,
+  startTownAnimation,
+} from "./src/core";
 
 initiateCanvas();
-
-startAnimation();
+startEventListeners();
+startTownAnimation();

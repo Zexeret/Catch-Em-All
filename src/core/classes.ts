@@ -1,6 +1,6 @@
 import { CANVAS_HEIGHT, CANVAS_WIDTH } from "../utils/constants";
 import { MovementKeyValues } from "../utils/movementUtils";
-import { canvasCtx } from "./initiateCanvas";
+import { canvasCtx } from "./canvas";
 
 export type Coordinates = {
   x: number;
@@ -66,7 +66,7 @@ type SpriteConstructorPropsType = {
   image: HTMLImageElement;
   position: Coordinates;
   playerConfig?: PlayerSpriteConfig;
-  velocity: number;
+  velocity?: number;
 };
 export class Sprite extends BaseSprite {
   image: HTMLImageElement;
@@ -77,7 +77,7 @@ export class Sprite extends BaseSprite {
   constructor({
     image,
     position,
-    velocity,
+    velocity = 0,
     playerConfig = { frameCount: 1 },
   }: SpriteConstructorPropsType) {
     super({ position, velocity });

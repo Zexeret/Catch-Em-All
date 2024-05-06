@@ -13,3 +13,8 @@ export const initiateCanvas = () => {
   canvasCtx.fillStyle = "white";
   canvasCtx.fillRect(0, 0, canvas.width, canvas.height);
 };
+
+export const resetCanvasDraw = () => {
+  canvasCtx.fillStyle = "black";
+  canvasCtx.fillRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
+};

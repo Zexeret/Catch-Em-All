@@ -7,9 +7,12 @@ type LoadSpritesReturnType = {
   townMap: Sprite;
   playerDownSprite: Sprite;
   foreGroundSprite: Sprite;
+  battleGroundSprite: Sprite;
 };
 
-export const loadSprites = (map_offset: Coordinates): LoadSpritesReturnType => {
+export let getSprites: () => LoadSpritesReturnType;
+
+export const loadSprites = (map_offset?: Coordinates): void => {
   const mapImg = new Image();
   mapImg.src = "../src/assets/images/Pellet Town.png";
 
@@ -28,11 +31,20 @@ export const loadSprites = (map_offset: Coordinates): LoadSpritesReturnType => {
   const foregroundImg = new Image();
   foregroundImg.src = "../src/assets/images/foreground.png";
 
+  const battleGround = new Image();
+  battleGround.src = "../src/assets/images/battleBackground.png";
+
   const townMap = new Sprite({
     image: mapImg,
     position: map_offset,
     velocity: WALK_VELOCITY,
   });
+
+  const battleGroundSprite = new Sprite({
+    image: battleGround,
+    position: { x: 0, y: 0 },
+  });
+
   const playerDownSprite = new Sprite({
     image: playerDownImg,
     position: {
@@ -57,9 +69,13 @@ export const loadSprites = (map_offset: Coordinates): LoadSpritesReturnType => {
     velocity: WALK_VELOCITY,
   });
 
-  return {
-    townMap,
-    playerDownSprite,
-    foreGroundSprite,
+  const getSpritesFn = () => {
+    return {
+      townMap,
+      playerDownSprite,
+      foreGroundSprite,
+      battleGroundSprite,
+    };
   };
+  getSprites = getSpritesFn;
 };
