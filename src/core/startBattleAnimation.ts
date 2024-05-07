@@ -1,6 +1,7 @@
 import { Monster, MonsterList } from "../monster";
 import { AnimateOnCanvas } from "../utils/animate";
 import { FPS } from "../utils/constants";
+import { fadeOut } from "./canvas";
 import { getSprites, loadSprites } from "./loadSprite";
 import { resumeTownAnimation } from "./startTownAnimation";
 
@@ -17,13 +18,29 @@ export const startBattleAnimation = () => {
     draggo.drawEnemyMonster();
   };
 
+  showBattleInterfaces();
   const battleGroundAnimationController = new AnimateOnCanvas(
     FPS,
     drawBattleGround
   );
 
-  // setTimeout(() => {
-  //   battleGroundAnimationController.stopAnimationRender();
-  //   resumeTownAnimation();
-  // }, 10000);
+  setTimeout(() => {
+    battleGroundAnimationController.stopAnimationRender();
+    fadeOut({
+      callbackFun: () => {
+        resumeTownAnimation();
+        hideBattleInterfaces();
+      },
+    });
+  }, 10000);
+};
+
+const showBattleInterfaces = () => {
+  const attackInterface = document.getElementById("attackInterface");
+  attackInterface.classList.remove("none-display");
+};
+
+const hideBattleInterfaces = () => {
+  const attackInterface = document.getElementById("attackInterface");
+  attackInterface.classList.add("none-display");
 };

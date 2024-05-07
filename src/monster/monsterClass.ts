@@ -5,7 +5,11 @@ import {
 } from "../utils/constants";
 import { MonsterDetailsJSON, MonsterList } from "./monsterDetails";
 import { Move } from "./moveClass";
-import { MoveDetailsJSON } from "./moveDetails";
+import { MonsterbaseTypeCSS, MoveDetailsJSON } from "./moveDetails";
+
+const isButton = (source: any): source is HTMLButtonElement => {
+  return source.nodeName && source.nodeName === "BUTTON";
+};
 
 export class Monster {
   name: string;
@@ -17,6 +21,7 @@ export class Monster {
   #currentFrameNumber: number;
   #elasped: number;
   animate: boolean;
+  #attackBarColored: boolean = false;
 
   constructor(monsterName: MonsterList) {
     const monster = MonsterDetailsJSON[monsterName];
@@ -51,6 +56,10 @@ export class Monster {
 
   drawAllyMonster() {
     this.#draw(false);
+    if (!this.#attackBarColored) {
+      this.#colorAttackBar();
+      this.#attackBarColored = true;
+    }
   }
 
   #draw(enemy: boolean) {
@@ -75,5 +84,23 @@ export class Monster {
       this.#currentFrameNumber =
         (this.#currentFrameNumber + 1) % this.spriteFrames;
     }
+  }
+
+  #colorAttackBar() {
+    const attackbars = document.querySelectorAll(".attackBar button");
+
+    console.log(attackbars);
+
+    this.initialMoves.forEach((move, index) => {
+      const moveName = move.name;
+      const moveTypeCSS = MonsterbaseTypeCSS[move.type];
+      const attackButton = attackbars[index];
+
+      if (isButton(attackButton)) {
+        attackButton.style.background = moveTypeCSS.background;
+        attackButton.style.color = moveTypeCSS.textColor;
+        attackButton.innerHTML = moveName;
+      }
+    });
   }
 }

@@ -12,12 +12,40 @@ export enum MonsterBaseType {
   WATER = "WATER",
   GRASS = "GRASS",
   NORMAL = "NORMAL",
+  GROUND = "GROUND",
 }
+type typeCSS = {
+  background: string;
+  textColor: string;
+};
+
+export const MonsterbaseTypeCSS: Record<MonsterBaseType, typeCSS> = {
+  FIRE: {
+    background: "#EA7A3C",
+    textColor: "white",
+  },
+  WATER: {
+    background: "#539AE2",
+    textColor: "white",
+  },
+  GRASS: {
+    background: "#71C558",
+    textColor: "white",
+  },
+  NORMAL: {
+    background: "#00FFFFF",
+    textColor: "black",
+  },
+  GROUND: {
+    background: "#CC9F4F",
+    textColor: "black",
+  },
+};
 
 export const MoveDetailsJSON: Record<MoveList, MonsterMove> = {
   TACKLE: {
     name: "Tackle",
-    type: MonsterBaseType.NORMAL,
+    type: MonsterBaseType.GROUND,
     rawDamage: 10,
     frontAnimation: null,
     backAnimation: null,
@@ -25,7 +53,7 @@ export const MoveDetailsJSON: Record<MoveList, MonsterMove> = {
   },
   CUT: {
     name: "Cut",
-    type: MonsterBaseType.NORMAL,
+    type: MonsterBaseType.WATER,
     rawDamage: 15,
     frontAnimation: null,
     backAnimation: null,
