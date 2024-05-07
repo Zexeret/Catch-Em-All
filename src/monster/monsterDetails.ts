@@ -1,12 +1,5 @@
 import { MoveList } from "./moveDetails";
 
-export enum MonsterType {
-  FIRE = "FIRE",
-  WATER = "WATER",
-  GRASS = "GRASS",
-  NORMAL = "NORMAL",
-}
-
 export type MonsterDetails = {
   name: string;
   frontAnimation: string;

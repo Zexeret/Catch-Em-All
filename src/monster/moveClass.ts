@@ -1,12 +1,11 @@
-import { MonsterType } from "./monsterDetails";
-import { MonsterMove } from "./moveDetails";
+import { MonsterBaseType, MonsterMove } from "./moveDetails";
 
 export class Move {
   name: string;
-  type: MonsterType;
+  type: MonsterBaseType;
   rawDamage: number;
-  frontAnimation: HTMLImageElement;
-  backAnimation: HTMLImageElement;
+  frontAnimation: HTMLImageElement = null;
+  backAnimation: HTMLImageElement = null;
   spriteFrames: number;
 
   constructor(move: MonsterMove) {
@@ -14,11 +13,15 @@ export class Move {
     this.type = move.type;
     this.rawDamage = move.rawDamage;
 
-    this.frontAnimation = new Image();
-    this.frontAnimation.src = move.frontAnimation;
+    if (move.frontAnimation) {
+      this.frontAnimation = new Image();
+      this.frontAnimation.src = move.frontAnimation;
+    }
 
-    this.backAnimation = new Image();
-    this.backAnimation.src = move.backAnimation;
+    if (move.backAnimation) {
+      this.backAnimation = new Image();
+      this.backAnimation.src = move.backAnimation;
+    }
 
     this.spriteFrames = move.spriteFames;
   }

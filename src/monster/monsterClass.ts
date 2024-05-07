@@ -11,14 +11,12 @@ export class Monster {
   name: string;
   health: number;
   initialMoves: Array<Move>;
-  frontAnimation: HTMLImageElement;
-  backAnimation: HTMLImageElement;
+  frontAnimation: HTMLImageElement = null;
+  backAnimation: HTMLImageElement = null;
   spriteFrames: number;
   #currentFrameNumber: number;
   #elasped: number;
   animate: boolean;
-  #singleSpriteFrameWidth: number;
-  #singleSpriteFrameHeight: number;
 
   constructor(monsterName: MonsterList) {
     const monster = MonsterDetailsJSON[monsterName];
@@ -30,22 +28,21 @@ export class Monster {
       this.initialMoves.push(new Move(MoveDetailsJSON[move]));
     });
 
-    this.frontAnimation = new Image();
-    this.frontAnimation.src = monster.frontAnimation;
+    if (monster.frontAnimation) {
+      this.frontAnimation = new Image();
+      this.frontAnimation.src = monster.frontAnimation;
+    }
 
-    this.backAnimation = new Image();
-    this.backAnimation.src = monster.backAnimation;
+    if (monster.backAnimation) {
+      this.backAnimation = new Image();
+      this.backAnimation.src = monster.backAnimation;
+    }
 
     this.spriteFrames = monster.spriteFrames;
     this.#currentFrameNumber = 0;
     this.#elasped = 0;
 
     this.animate = true;
-
-    this.#singleSpriteFrameWidth =
-      this.frontAnimation.width / this.spriteFrames;
-
-    this.#singleSpriteFrameHeight = this.frontAnimation.height;
   }
 
   drawEnemyMonster() {
@@ -59,18 +56,17 @@ export class Monster {
   #draw(enemy: boolean) {
     let image = enemy ? this.frontAnimation : this.backAnimation;
     let position = enemy ? ENEMY_BATTLE_POSITION : ALLY_BATTLE_POSITION;
+    let singleFrameWidth = image.width / this.spriteFrames;
     canvasCtx.drawImage(
       image,
-      this.animate
-        ? this.#currentFrameNumber * this.#singleSpriteFrameWidth
-        : 0,
+      this.animate ? this.#currentFrameNumber * singleFrameWidth : 0,
       0,
-      this.#singleSpriteFrameWidth,
-      this.#singleSpriteFrameHeight,
+      singleFrameWidth,
+      image.height,
       position.x,
       position.y,
-      this.#singleSpriteFrameWidth,
-      this.#singleSpriteFrameHeight
+      singleFrameWidth,
+      image.height
     );
 
     if (this.spriteFrames > 1) this.#elasped++;

@@ -13,11 +13,11 @@ export const FPS = 60;
 
 //Since there is currently only one vs one, we can hardCode the battle positions
 export const ALLY_BATTLE_POSITION = {
-  x: 0,
-  y: 0,
+  x: 280,
+  y: 325,
 };
 
 export const ENEMY_BATTLE_POSITION = {
-  x: 0,
-  y: 0,
+  x: 800,
+  y: 100,
 };

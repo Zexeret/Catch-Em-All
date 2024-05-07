@@ -5,7 +5,9 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "rimraf dist && npx tsc && npx browserify dist/app.js -o public/bundle.js"
+    "start": "rimraf dist && npx tsc && npx browserify dist/app.js -o public/bundle.js",
+    "build": "webpack",
+    "watch": "webpack --watch"
   },
   "keywords": [],
   "author": "",
@@ -13,6 +15,9 @@
   "devDependencies": {
     "browserify": "^17.0.0",
     "rimraf": "^5.0.5",
-    "typescript": "^5.4.5"
+    "ts-loader": "^9.5.1",
+    "typescript": "^5.4.5",
+    "webpack": "^5.91.0",
+    "webpack-cli": "^5.1.4"
   }
 }

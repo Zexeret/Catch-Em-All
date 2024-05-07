@@ -1,18 +1,23 @@
-import { MonsterType } from "./monsterDetails";
-
 export type MonsterMove = {
   name: string;
-  type: MonsterType;
+  type?: MonsterBaseType;
   rawDamage: number;
   frontAnimation: string | null;
   backAnimation: string | null;
   spriteFames: number;
 };
 
+export enum MonsterBaseType {
+  FIRE = "FIRE",
+  WATER = "WATER",
+  GRASS = "GRASS",
+  NORMAL = "NORMAL",
+}
+
 export const MoveDetailsJSON: Record<MoveList, MonsterMove> = {
   TACKLE: {
     name: "Tackle",
-    type: MonsterType.NORMAL,
+    type: MonsterBaseType.NORMAL,
     rawDamage: 10,
     frontAnimation: null,
     backAnimation: null,
@@ -20,7 +25,7 @@ export const MoveDetailsJSON: Record<MoveList, MonsterMove> = {
   },
   CUT: {
     name: "Cut",
-    type: MonsterType.NORMAL,
+    type: MonsterBaseType.NORMAL,
     rawDamage: 15,
     frontAnimation: null,
     backAnimation: null,
@@ -28,7 +33,7 @@ export const MoveDetailsJSON: Record<MoveList, MonsterMove> = {
   },
   FIREBALL: {
     name: "Fireball",
-    type: MonsterType.FIRE,
+    type: MonsterBaseType.FIRE,
     rawDamage: 30,
     frontAnimation: "../src/assets/images/fireball.png",
     backAnimation: null,

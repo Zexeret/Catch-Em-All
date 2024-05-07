@@ -6,17 +6,15 @@ import { resumeTownAnimation } from "./startTownAnimation";
 
 export const startBattleAnimation = () => {
   const { battleGroundSprite } = getSprites();
-  let temp = 1;
 
-  const emby = 0;
+  const emby = new Monster(MonsterList.EMBERY);
+  const draggo = new Monster(MonsterList.DRAGGOG);
 
   const drawBattleGround = () => {
     battleGroundSprite.draw();
 
-    if (temp === 1) {
-      temp = 0;
-      console.log(emby);
-    }
+    emby.drawAllyMonster();
+    draggo.drawEnemyMonster();
   };
 
   const battleGroundAnimationController = new AnimateOnCanvas(
