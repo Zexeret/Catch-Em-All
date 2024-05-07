@@ -34,3 +34,34 @@ body {
         opacity: 0;
     }
 }
+
+.fadeInAnimation {
+    /* animation: name duration timing-function delay iteration-count direction fill-mode; */
+    animation-name: fade;
+    animation-duration: 2s;
+    animation-timing-function: linear;
+    animation-delay: 0s;
+    animation-iteration-count: 1;
+    animation-direction: normal;
+    animation-fill-mode: forwards;
+}
+
+@keyframes fade {
+    0% {
+        opacity: 0;
+    }
+
+    100% {
+        opacity: 1;
+    }
+}
+
+.fadeOutAnimation {
+    animation-name: fade;
+    animation-duration: 2s;
+    animation-timing-function: linear;
+    animation-delay: 0s;
+    animation-iteration-count: 1;
+    animation-direction: reverse;
+    animation-fill-mode: forwards;
+}

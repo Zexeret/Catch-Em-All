@@ -2,7 +2,7 @@ import { AnimateOnCanvas } from "../utils/animate";
 import { generateBattleZoneMap } from "../utils/battleZone";
 import { checkCollision, generateCollisionMap } from "../utils/collisionGrid";
 import {
-  BATTLE_SCREEN_ACTIVATION_TIME,
+  FLASH_ANIMATION_TIME,
   FPS,
   POKEMON_COLLISION_PERCENTAGE,
 } from "../utils/constants";
@@ -11,7 +11,7 @@ import {
   lastPressedMovementKey,
 } from "../utils/movementUtils";
 import { Boundary, Coordinates, Sprite } from "./classes";
-import { resetCanvasDraw } from "./canvas";
+import { fadeIn, flashAnimation, resetCanvasDraw } from "./canvas";
 import { getSprites, loadSprites } from "./loadSprite";
 import { startEventListeners } from "./startEventListeners";
 import { startBattleAnimation } from "./startBattleAnimation";
@@ -23,7 +23,6 @@ export const startTownAnimation = () => {
     x: -740,
     y: -590,
   };
-  const canvasCover = document.getElementById("canvasCover");
 
   loadSprites(map_offset);
   const { townMap, foreGroundSprite, playerDownSprite } = getSprites();
@@ -61,14 +60,13 @@ export const startTownAnimation = () => {
         ) {
           console.log("Battle Zone Activation");
           townAnimationController.stopAnimationRender();
-          canvasCover.classList.add("flashAnimation");
-
-          // 2 seconds because thats the duration of our screen flashing animation
-          setTimeout(() => {
-            canvasCover.classList.remove("flashAnimation");
-            resetCanvasDraw();
-            startBattleAnimation();
-          }, BATTLE_SCREEN_ACTIVATION_TIME);
+          flashAnimation({
+            callbackFun: () => {
+              resetCanvasDraw();
+              startBattleAnimation();
+              fadeIn({});
+            },
+          });
           break;
         }
       }
