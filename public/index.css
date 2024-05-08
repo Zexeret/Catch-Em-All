@@ -176,12 +176,13 @@ body {
 
 }
 
-.attackBar:hover {
+
+.attackBar:focus {
     transform: scale(1.07);
 
 }
 
-.attackBar:hover .attackTypeSpanDiv {
+.attackBar:focus .attackTypeSpanDiv {
     transform: scale(1.07);
     display: flex;
 

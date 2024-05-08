@@ -7,8 +7,8 @@ import { MonsterDetailsJSON, MonsterList } from "./monsterDetails";
 import { Move } from "./moveClass";
 import { MonsterbaseTypeCSS, MoveDetailsJSON } from "./moveDetails";
 
-const isButton = (source: any): source is HTMLButtonElement => {
-  return source.nodeName && source.nodeName === "BUTTON";
+export const isHTMLElement = (source: any): source is HTMLElement => {
+  return source.nodeName && source.nodeType === 1;
 };
 
 export class Monster {
@@ -22,6 +22,7 @@ export class Monster {
   #elasped: number;
   animate: boolean;
   #attackBarColored: boolean = false;
+  #isAlly: boolean;
 
   constructor(monsterName: MonsterList) {
     const monster = MonsterDetailsJSON[monsterName];
@@ -48,14 +49,20 @@ export class Monster {
     this.#elasped = 0;
 
     this.animate = true;
+    this.#isAlly = true;
   }
 
   drawEnemyMonster() {
     this.#draw(true);
+    this.#isAlly = false;
   }
 
   drawAllyMonster() {
     this.#draw(false);
+
+    // This is here so that we do not call colorAttackBar
+    // function over and over as draw fn is getting called
+    // non stop
     if (!this.#attackBarColored) {
       this.#colorAttackBar();
       this.#attackBarColored = true;
@@ -91,7 +98,7 @@ export class Monster {
     const typeSpan = document.querySelectorAll(".attackTypeSpanDiv span");
 
     attackbars.forEach((attackButton, index) => {
-      if (isButton(attackButton)) {
+      if (isHTMLElement(attackButton)) {
         if (this.initialMoves.length > index) {
           const move = this.initialMoves[index];
           const moveName = move.name;
@@ -104,9 +111,30 @@ export class Monster {
 
           //populate type in <span> tag
           moveTypeSpan.innerHTML = move.type;
-        } else {
         }
+      } else {
+        throw new Error("Not an HTML Element");
       }
     });
+  }
+
+  static performAttack(
+    attacker: Monster,
+    receipent: Monster,
+    attackIndex: number
+  ) {
+    const allyTotalMoves = attacker.initialMoves.length;
+    if (allyTotalMoves < attackIndex + 1) {
+      console.log(
+        attacker.name,
+        "does not have",
+        attackIndex + 1,
+        "attack yet"
+      );
+      return;
+    }
+
+    const attackerMove = attacker.initialMoves[attackIndex];
+    console.log(attackerMove.name, "on", receipent.name, "performed");
   }
 }
