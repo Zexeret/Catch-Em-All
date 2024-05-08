@@ -4,6 +4,7 @@ import { checkCollision, generateCollisionMap } from "../utils/collisionGrid";
 import {
   FLASH_ANIMATION_TIME,
   FPS,
+  INITIAL_MAP_OFFSET,
   POKEMON_COLLISION_PERCENTAGE,
 } from "../utils/constants";
 import {
@@ -19,15 +20,9 @@ import { startBattleAnimation } from "./startBattleAnimation";
 export let resumeTownAnimation: () => void;
 
 export const startTownAnimation = () => {
-  const map_offset: Coordinates = {
-    x: -740,
-    y: -590,
-  };
-
-  loadSprites(map_offset);
   const { townMap, foreGroundSprite, playerDownSprite } = getSprites();
-  const collisionMapBoundary = generateCollisionMap(map_offset);
-  const battleZoneMapBoundary = generateBattleZoneMap(map_offset);
+  const collisionMapBoundary = generateCollisionMap(INITIAL_MAP_OFFSET);
+  const battleZoneMapBoundary = generateBattleZoneMap(INITIAL_MAP_OFFSET);
 
   const movables: Array<Sprite | Boundary> = [
     townMap,

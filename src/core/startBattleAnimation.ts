@@ -38,9 +38,19 @@ export const startBattleAnimation = () => {
 const showBattleInterfaces = () => {
   const attackInterface = document.getElementById("attackInterface");
   attackInterface.classList.remove("none-display");
+
+  const healthBars = document.querySelectorAll("#healthBar");
+  healthBars.forEach((bar) => {
+    bar.classList.remove("none-display");
+  });
 };
 
 const hideBattleInterfaces = () => {
   const attackInterface = document.getElementById("attackInterface");
   attackInterface.classList.add("none-display");
+
+  const healthBars = document.querySelectorAll("#healthBar");
+  healthBars.forEach((bar) => {
+    bar.classList.add("none-display");
+  });
 };

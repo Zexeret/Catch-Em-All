@@ -88,18 +88,24 @@ export class Monster {
 
   #colorAttackBar() {
     const attackbars = document.querySelectorAll(".attackBar button");
+    const typeSpan = document.querySelectorAll(".attackTypeSpanDiv span");
 
-    console.log(attackbars);
-
-    this.initialMoves.forEach((move, index) => {
-      const moveName = move.name;
-      const moveTypeCSS = MonsterbaseTypeCSS[move.type];
-      const attackButton = attackbars[index];
-
+    attackbars.forEach((attackButton, index) => {
       if (isButton(attackButton)) {
-        attackButton.style.background = moveTypeCSS.background;
-        attackButton.style.color = moveTypeCSS.textColor;
-        attackButton.innerHTML = moveName;
+        if (this.initialMoves.length > index) {
+          const move = this.initialMoves[index];
+          const moveName = move.name;
+          const moveTypeCSS = MonsterbaseTypeCSS[move.type];
+          const moveTypeSpan = typeSpan[index];
+
+          attackButton.style.background = moveTypeCSS.background;
+          attackButton.style.color = moveTypeCSS.textColor;
+          attackButton.innerHTML = moveName;
+
+          //populate type in <span> tag
+          moveTypeSpan.innerHTML = move.type;
+        } else {
+        }
       }
     });
   }

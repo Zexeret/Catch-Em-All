@@ -11,6 +11,11 @@ export const FADE_OUT_ANIMATION_TIME = 2000;
 
 export const FPS = 60;
 
+export const INITIAL_MAP_OFFSET = {
+  x: -740,
+  y: -590,
+};
+
 //Since there is currently only one vs one, we can hardCode the battle positions
 export const ALLY_BATTLE_POSITION = {
   x: 280,
