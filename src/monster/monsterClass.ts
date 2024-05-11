@@ -1,4 +1,4 @@
-import { canvasCtx } from "../core";
+import { Coordinates, canvasCtx } from "../core";
 import {
   ALLY_BATTLE_POSITION,
   ENEMY_BATTLE_POSITION,
@@ -11,7 +11,15 @@ export const isHTMLElement = (source: any): source is HTMLElement => {
   return source.nodeName && source.nodeType === 1;
 };
 
-export class Monster {
+export abstract class battleStats {
+  protected battleHealth: number;
+  protected isAlly: boolean;
+  constructor() {}
+
+  abstract resetStats(): void;
+}
+
+export class Monster extends battleStats {
   name: string;
   health: number;
   initialMoves: Array<Move>;
@@ -22,13 +30,16 @@ export class Monster {
   #elasped: number;
   animate: boolean;
   #attackBarColored: boolean = false;
-  #isAlly: boolean;
+  position: Coordinates;
+  opacity: number;
 
   constructor(monsterName: MonsterList) {
+    super();
     const monster = MonsterDetailsJSON[monsterName];
 
     this.name = monster.name;
     this.health = monster.health;
+    this.battleHealth = monster.health;
     this.initialMoves = [];
     monster.initialMoves.forEach((move) => {
       this.initialMoves.push(new Move(MoveDetailsJSON[move]));
@@ -49,12 +60,17 @@ export class Monster {
     this.#elasped = 0;
 
     this.animate = true;
-    this.#isAlly = true;
+    this.isAlly = true;
+
+    this.position = ALLY_BATTLE_POSITION;
+
+    this.opacity = 1;
   }
 
   drawEnemyMonster() {
     this.#draw(true);
-    this.#isAlly = false;
+    this.isAlly = false;
+    this.position = ENEMY_BATTLE_POSITION;
   }
 
   drawAllyMonster() {
@@ -69,21 +85,28 @@ export class Monster {
     }
   }
 
+  resetStats(): void {
+    this.battleHealth = this.health;
+  }
+
   #draw(enemy: boolean) {
     let image = enemy ? this.frontAnimation : this.backAnimation;
-    let position = enemy ? ENEMY_BATTLE_POSITION : ALLY_BATTLE_POSITION;
     let singleFrameWidth = image.width / this.spriteFrames;
+
+    canvasCtx.save();
+    canvasCtx.globalAlpha = this.opacity;
     canvasCtx.drawImage(
       image,
       this.animate ? this.#currentFrameNumber * singleFrameWidth : 0,
       0,
       singleFrameWidth,
       image.height,
-      position.x,
-      position.y,
+      this.position.x,
+      this.position.y,
       singleFrameWidth,
       image.height
     );
+    canvasCtx.restore();
 
     if (this.spriteFrames > 1) this.#elasped++;
 
@@ -117,6 +140,47 @@ export class Monster {
       }
     });
   }
+  private attack(
+    attacker: Monster,
+    receipent: Monster,
+    attackMove: Move
+  ): boolean {
+    const animateMove = this.isAlly
+      ? attackMove.animateAllyMove
+      : attackMove.animateEnemyMove;
+    const healthBar = document.querySelectorAll("#healthBar .greenHealthBar")[
+      this.isAlly ? 0 : 1
+    ];
+
+    if (animateMove) {
+      animateMove({
+        attacker: attacker,
+        receipent: receipent,
+        move: attackMove,
+      });
+
+      if (isHTMLElement(healthBar)) {
+        receipent.battleHealth -= attackMove.rawDamage;
+        if (receipent.battleHealth <= 0) {
+          healthBar.style.width = `0%`;
+          return true;
+        }
+        healthBar.style.width = `${
+          (receipent.battleHealth / receipent.health) * 100
+        }%`;
+      }
+    } else {
+      throw new Error(
+        `${
+          attackMove.name
+        } does not have a animation function when performed by ${
+          this.isAlly ? "Ally" : "Enemy"
+        }.`
+      );
+    }
+
+    return false;
+  }
 
   static performAttack(
     attacker: Monster,
@@ -134,7 +198,15 @@ export class Monster {
       return;
     }
 
-    const attackerMove = attacker.initialMoves[attackIndex];
-    console.log(attackerMove.name, "on", receipent.name, "performed");
+    console.log(receipent.battleHealth);
+    const attackMove = attacker.initialMoves[attackIndex];
+    const enemyDefeated = attacker.attack(attacker, receipent, attackMove);
+
+    if (enemyDefeated) {
+      console.log(attacker.name, "defeated", receipent.name);
+    }
+
+    console.log(attackMove.name, "on", receipent.name, "performed");
+    return enemyDefeated;
   }
 }

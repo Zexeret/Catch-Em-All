@@ -27,7 +27,7 @@ export const MonsterDetailsJSON: Record<MonsterList, MonsterDetails> = {
     frontAnimation: "../src/assets/images/draggleSprite.png",
     backAnimation: null,
     health: 60,
-    initialMoves: [MoveList.CUT, MoveList.TACKLE],
+    initialMoves: [MoveList.FIREBALL, MoveList.TACKLE],
     spriteFrames: 4,
   },
 };

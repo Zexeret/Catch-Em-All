@@ -1,4 +1,4 @@
-import { Monster, MonsterList, isHTMLElement } from "../monster";
+import { Monster, MonsterList, Move, isHTMLElement } from "../monster";
 import { AnimateOnCanvas } from "../utils/animate";
 import { FPS } from "../utils/constants";
 import { fadeOut } from "./canvas";
@@ -7,6 +7,7 @@ import { resumeTownAnimation } from "./startTownAnimation";
 
 let attackButtonFocusIndex = 0;
 let abortSignal: AbortSignal;
+let performAttack;
 
 const chaangeAttackButtonFocus = ({
   change,
@@ -40,20 +41,19 @@ export const startBattleAnimation = () => {
   const emby = new Monster(MonsterList.EMBERY);
   const draggo = new Monster(MonsterList.DRAGGOG);
 
-  console.log(emby);
-
   const handleAttackFocus = (event: KeyboardEvent) => {
-    switch (event.key) {
-      case "a":
+    switch (event.code) {
+      case "KeyA":
       case "ArrowLeft":
         chaangeAttackButtonFocus({ change: -1 });
         break;
-      case "d":
+      case "KeyD":
       case "ArrowRight":
         chaangeAttackButtonFocus({ change: 1 });
         break;
       case "Enter":
-        Monster.performAttack(emby, draggo, attackButtonFocusIndex);
+      case "Space":
+        performAttack(emby, draggo, attackButtonFocusIndex);
         break;
     }
   };
@@ -61,8 +61,9 @@ export const startBattleAnimation = () => {
   const drawBattleGround = () => {
     battleGroundSprite.draw();
 
-    emby.drawAllyMonster();
     draggo.drawEnemyMonster();
+    Move.MoveSprites.forEach((move) => move.draw());
+    emby.drawAllyMonster();
   };
 
   window.addEventListener("keydown", handleAttackFocus, {
@@ -75,16 +76,25 @@ export const startBattleAnimation = () => {
     drawBattleGround
   );
 
-  // setTimeout(() => {
-  //   battleGroundAnimationController.stopAnimationRender();
-  //   controller.abort();
-  //   fadeOut({
-  //     callbackFun: () => {
-  //       resumeTownAnimation();
-  //       hideBattleInterfaces();
-  //     },
-  //   });
-  // }, 5000);
+  const performMoveAttack = (
+    attacker: Monster,
+    receipent: Monster,
+    attackIndex: number
+  ) => {
+    if (Monster.performAttack(attacker, receipent, attackIndex)) {
+      controller.abort();
+      setTimeout(() => {
+        battleGroundAnimationController.stopAnimationRender();
+        fadeOut({
+          callbackFun: () => {
+            resumeTownAnimation();
+            hideBattleInterfaces();
+          },
+        });
+      }, 3000);
+    }
+  };
+  performAttack = performMoveAttack;
 };
 
 const showBattleInterfaces = (emby: Monster, draggo: Monster) => {
@@ -104,7 +114,7 @@ const showBattleInterfaces = (emby: Monster, draggo: Monster) => {
     button.addEventListener(
       "click",
       () => {
-        Monster.performAttack(emby, draggo, index);
+        performAttack(draggo, emby, index);
       },
       { signal: abortSignal }
     );
@@ -138,4 +148,14 @@ const hideBattleInterfaces = () => {
   healthBars.forEach((bar) => {
     bar.classList.add("none-display");
   });
+
+  const greenHealthBars = document.querySelectorAll(
+    "#healthBar .greenHealthBar"
+  );
+  isHTMLElement(greenHealthBars[0])
+    ? (greenHealthBars[0].style.width = "100%")
+    : null;
+  isHTMLElement(greenHealthBars[1])
+    ? (greenHealthBars[1].style.width = "100%")
+    : null;
 };
