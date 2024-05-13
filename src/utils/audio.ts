@@ -13,7 +13,7 @@ const audioMap = {
   }),
   battle: new Howl({
     src: "../src/assets/audio/battle.mp3",
-    html5: true,
+    html5: false,
     volume: 0.1,
     loop: true,
   }),
