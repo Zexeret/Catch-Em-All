@@ -2,7 +2,6 @@ import { AnimateOnCanvas } from "../utils/animate";
 import { generateBattleZoneMap } from "../utils/battleZone";
 import { checkCollision, generateCollisionMap } from "../utils/collisionGrid";
 import {
-  FLASH_ANIMATION_TIME,
   FPS,
   INITIAL_MAP_OFFSET,
   POKEMON_COLLISION_PERCENTAGE,
@@ -16,6 +15,7 @@ import { fadeIn, flashAnimation, resetCanvasDraw } from "./canvas";
 import { getSprites, loadSprites } from "./loadSprite";
 import { startEventListeners } from "./startEventListeners";
 import { startBattleAnimation } from "./startBattleAnimation";
+import audioMap from "../utils/audio";
 
 export let resumeTownAnimation: () => void;
 
@@ -55,6 +55,12 @@ export const startTownAnimation = () => {
         ) {
           console.log("Battle Zone Activation");
           townAnimationController.stopAnimationRender();
+
+          //audio changes
+          audioMap.map.stop();
+          audioMap.initBattle.play();
+          audioMap.battle.play();
+
           flashAnimation({
             callbackFun: () => {
               resetCanvasDraw();
@@ -95,6 +101,15 @@ export const startTownAnimation = () => {
 
   const resumeAnimation = () => {
     townAnimationController.startAnimationRender();
+    audioMap.battle.stop();
+    audioMap.map.play();
   };
   resumeTownAnimation = resumeAnimation;
+
+  let clicked = false;
+  window.addEventListener("click", () => {
+    if (clicked) return;
+    audioMap.map.play();
+    clicked = true;
+  });
 };

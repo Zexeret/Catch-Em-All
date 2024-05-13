@@ -1,8 +1,9 @@
 import { Monster, MonsterList, Move, isHTMLElement } from "../monster";
 import { AnimateOnCanvas } from "../utils/animate";
+import audioMap from "../utils/audio";
 import { FPS } from "../utils/constants";
 import { fadeOut } from "./canvas";
-import { getSprites, loadSprites } from "./loadSprite";
+import { getSprites } from "./loadSprite";
 import { resumeTownAnimation } from "./startTownAnimation";
 
 let attackButtonFocusIndex = 0;
@@ -57,8 +58,10 @@ const performAllyAttack = async (
   );
 
   if (enemyDefeated) {
+    audioMap.battle.stop();
+    audioMap.victory.play();
     await showDialogueContainer(
-      `${receipent.name} defeated ${receipent.name}!!!`,
+      `${attacker.name} defeated ${receipent.name}!!!`,
       2000
     );
     await showDialogueContainer(`${receipent.name} fained.`, 2000);
@@ -85,7 +88,7 @@ const performEnemyAttack = async (
 
   if (allyDefeated) {
     await showDialogueContainer(
-      `${receipent.name} defeated ${receipent.name}!!!`,
+      `${attacker.name} defeated ${receipent.name}!!!`,
       2000
     );
     await showDialogueContainer(`${receipent.name} fained.`, 2000);

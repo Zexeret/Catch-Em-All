@@ -5,6 +5,7 @@ import {
   ALLY_BATTLE_POSITION,
   ENEMY_BATTLE_POSITION,
 } from "../utils/constants";
+import audioMap from "../utils/audio";
 
 export type animateFunctionProps = {
   attacker: Monster;
@@ -74,6 +75,31 @@ const hitAnimation = (monster: Monster): void => {
   });
 };
 
+const basicTackleMove = ({
+  attacker,
+  receipent,
+  onComplete,
+  move,
+}: animateFunctionProps) => {
+  const tl = gsap.timeline();
+  const isAlly = attacker.isAlly ? 1 : -1;
+  tl.to(attacker.position, {
+    x: attacker.position.x - isAlly * 20,
+  })
+    .to(attacker.position, {
+      x: attacker.position.x + isAlly * 40,
+      duration: 0.1,
+      onComplete() {
+        hitAnimation(receipent);
+        audioMap.tackleHit.play();
+        onComplete();
+      },
+    })
+    .to(attacker.position, {
+      x: attacker.position.x,
+    });
+};
+
 export const MoveDetailsJSON: Record<MoveList, MonsterMove> = {
   WATERBALL: {
     name: "Water Ball",
@@ -82,40 +108,8 @@ export const MoveDetailsJSON: Record<MoveList, MonsterMove> = {
     frontAnimation: null,
     backAnimation: null,
     spriteFames: 4,
-    animateAllyMove: ({ attacker, receipent, onComplete }) => {
-      const tl = gsap.timeline();
-      tl.to(attacker.position, {
-        x: attacker.position.x - 20,
-      })
-        .to(attacker.position, {
-          x: attacker.position.x + 40,
-          duration: 0.1,
-          onComplete() {
-            hitAnimation(receipent);
-            onComplete();
-          },
-        })
-        .to(attacker.position, {
-          x: attacker.position.x,
-        });
-    },
-    animateEnemyMove: ({ attacker, receipent, onComplete }) => {
-      const tl = gsap.timeline();
-      tl.to(attacker.position, {
-        x: attacker.position.x + 20,
-      })
-        .to(attacker.position, {
-          x: attacker.position.x - 40,
-          duration: 0.1,
-          onComplete() {
-            hitAnimation(receipent);
-            onComplete();
-          },
-        })
-        .to(attacker.position, {
-          x: attacker.position.x,
-        });
-    },
+    animateAllyMove: basicTackleMove,
+    animateEnemyMove: basicTackleMove,
   },
   WINEWHIP: {
     name: "Wine Whip",
@@ -124,40 +118,8 @@ export const MoveDetailsJSON: Record<MoveList, MonsterMove> = {
     frontAnimation: null,
     backAnimation: null,
     spriteFames: 4,
-    animateAllyMove: ({ attacker, receipent, onComplete }) => {
-      const tl = gsap.timeline();
-      tl.to(attacker.position, {
-        x: attacker.position.x - 20,
-      })
-        .to(attacker.position, {
-          x: attacker.position.x + 40,
-          duration: 0.1,
-          onComplete() {
-            hitAnimation(receipent);
-            onComplete();
-          },
-        })
-        .to(attacker.position, {
-          x: attacker.position.x,
-        });
-    },
-    animateEnemyMove: ({ attacker, receipent, onComplete }) => {
-      const tl = gsap.timeline();
-      tl.to(attacker.position, {
-        x: attacker.position.x + 20,
-      })
-        .to(attacker.position, {
-          x: attacker.position.x - 40,
-          duration: 0.1,
-          onComplete() {
-            hitAnimation(receipent);
-            onComplete();
-          },
-        })
-        .to(attacker.position, {
-          x: attacker.position.x,
-        });
-    },
+    animateAllyMove: basicTackleMove,
+    animateEnemyMove: basicTackleMove,
   },
   TACKLE: {
     name: "Tackle",
@@ -166,40 +128,8 @@ export const MoveDetailsJSON: Record<MoveList, MonsterMove> = {
     frontAnimation: null,
     backAnimation: null,
     spriteFames: 4,
-    animateAllyMove: ({ attacker, receipent, onComplete }) => {
-      const tl = gsap.timeline();
-      tl.to(attacker.position, {
-        x: attacker.position.x - 20,
-      })
-        .to(attacker.position, {
-          x: attacker.position.x + 40,
-          duration: 0.1,
-          onComplete() {
-            hitAnimation(receipent);
-            onComplete();
-          },
-        })
-        .to(attacker.position, {
-          x: attacker.position.x,
-        });
-    },
-    animateEnemyMove: ({ attacker, receipent, onComplete }) => {
-      const tl = gsap.timeline();
-      tl.to(attacker.position, {
-        x: attacker.position.x + 20,
-      })
-        .to(attacker.position, {
-          x: attacker.position.x - 40,
-          duration: 0.1,
-          onComplete() {
-            hitAnimation(receipent);
-            onComplete();
-          },
-        })
-        .to(attacker.position, {
-          x: attacker.position.x,
-        });
-    },
+    animateAllyMove: basicTackleMove,
+    animateEnemyMove: basicTackleMove,
   },
   CUT: {
     name: "Cut",
@@ -208,40 +138,8 @@ export const MoveDetailsJSON: Record<MoveList, MonsterMove> = {
     frontAnimation: null,
     backAnimation: null,
     spriteFames: 4,
-    animateAllyMove: ({ attacker, receipent, onComplete }) => {
-      const tl = gsap.timeline();
-      tl.to(attacker.position, {
-        x: attacker.position.x - 20,
-      })
-        .to(attacker.position, {
-          x: attacker.position.x + 40,
-          duration: 0.1,
-          onComplete() {
-            hitAnimation(receipent);
-            onComplete();
-          },
-        })
-        .to(attacker.position, {
-          x: attacker.position.x,
-        });
-    },
-    animateEnemyMove: ({ attacker, receipent, onComplete }) => {
-      const tl = gsap.timeline();
-      tl.to(attacker.position, {
-        x: attacker.position.x + 20,
-      })
-        .to(attacker.position, {
-          x: attacker.position.x - 40,
-          duration: 0.1,
-          onComplete() {
-            hitAnimation(receipent);
-            onComplete();
-          },
-        })
-        .to(attacker.position, {
-          x: attacker.position.x,
-        });
-    },
+    animateAllyMove: basicTackleMove,
+    animateEnemyMove: basicTackleMove,
   },
   FIREBALL: {
     name: "Fireball",
@@ -251,12 +149,14 @@ export const MoveDetailsJSON: Record<MoveList, MonsterMove> = {
     backAnimation: "../src/assets/images/fireball.png",
     spriteFames: 4,
     animateAllyMove: ({ attacker, receipent, move, onComplete }) => {
+      audioMap.initFireball.play();
       const tl = gsap.timeline();
       gsap.to(move.position, {
         x: ENEMY_BATTLE_POSITION.x + 5,
         y: ENEMY_BATTLE_POSITION.y + 5,
         duration: 0.6,
         onComplete() {
+          audioMap.fireballHit.play();
           hitAnimation(receipent);
           onComplete();
         },
@@ -269,6 +169,7 @@ export const MoveDetailsJSON: Record<MoveList, MonsterMove> = {
         y: ALLY_BATTLE_POSITION.y + 5,
         duration: 0.6,
         onComplete() {
+          audioMap.fireballHit.play();
           hitAnimation(receipent);
           onComplete();
         },

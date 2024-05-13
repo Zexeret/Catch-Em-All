@@ -3,7 +3,6 @@ import {
   ALLY_BATTLE_POSITION,
   ENEMY_BATTLE_POSITION,
 } from "../utils/constants";
-import { Monster } from "./monsterClass";
 import {
   MonsterBaseType,
   MonsterMove,

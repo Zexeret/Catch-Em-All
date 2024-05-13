@@ -18,7 +18,7 @@ export const isHTMLElement = (source: any): source is HTMLElement => {
 
 export abstract class battleStats {
   protected battleHealth: number;
-  protected isAlly: boolean;
+  isAlly: boolean;
   constructor() {}
 
   abstract resetStats(): void;

@@ -1,4 +1,3 @@
-import { CANVAS_HEIGHT, CANVAS_WIDTH } from "../utils/constants";
 import { MovementKeyValues } from "../utils/movementUtils";
 import { canvasCtx } from "./canvas";
 
