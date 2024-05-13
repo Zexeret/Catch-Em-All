@@ -81,12 +81,12 @@ export const startTownAnimation = () => {
     foreGroundSprite.draw();
 
     // Uncomment during development only
-    collisionMapBoundary.forEach((boundary) => {
-      boundary.draw();
-    });
-    battleZoneMapBoundary.forEach((boundary) => {
-      boundary.draw();
-    });
+    // collisionMapBoundary.forEach((boundary) => {
+    //   boundary.draw();
+    // });
+    // battleZoneMapBoundary.forEach((boundary) => {
+    //   boundary.draw();
+    // });
 
     renderMovable(directionKeyPressed);
   };

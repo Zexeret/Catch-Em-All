@@ -10,7 +10,7 @@ export type animateFunctionProps = {
   attacker: Monster;
   receipent: Monster;
   move?: Move;
-  onComplete?: () => void;
+  onComplete?: () => void; // make sure in moveDetails you call onComplete or else it wont take effect
 };
 export type MonsterMove = {
   name: string;
@@ -82,7 +82,7 @@ export const MoveDetailsJSON: Record<MoveList, MonsterMove> = {
     frontAnimation: null,
     backAnimation: null,
     spriteFames: 4,
-    animateAllyMove: ({ attacker, receipent }) => {
+    animateAllyMove: ({ attacker, receipent, onComplete }) => {
       const tl = gsap.timeline();
       tl.to(attacker.position, {
         x: attacker.position.x - 20,
@@ -92,13 +92,14 @@ export const MoveDetailsJSON: Record<MoveList, MonsterMove> = {
           duration: 0.1,
           onComplete() {
             hitAnimation(receipent);
+            onComplete();
           },
         })
         .to(attacker.position, {
           x: attacker.position.x,
         });
     },
-    animateEnemyMove: ({ attacker, receipent }) => {
+    animateEnemyMove: ({ attacker, receipent, onComplete }) => {
       const tl = gsap.timeline();
       tl.to(attacker.position, {
         x: attacker.position.x + 20,
@@ -108,6 +109,7 @@ export const MoveDetailsJSON: Record<MoveList, MonsterMove> = {
           duration: 0.1,
           onComplete() {
             hitAnimation(receipent);
+            onComplete();
           },
         })
         .to(attacker.position, {
@@ -122,7 +124,7 @@ export const MoveDetailsJSON: Record<MoveList, MonsterMove> = {
     frontAnimation: null,
     backAnimation: null,
     spriteFames: 4,
-    animateAllyMove: ({ attacker, receipent, move }) => {
+    animateAllyMove: ({ attacker, receipent, onComplete }) => {
       const tl = gsap.timeline();
       tl.to(attacker.position, {
         x: attacker.position.x - 20,
@@ -132,13 +134,14 @@ export const MoveDetailsJSON: Record<MoveList, MonsterMove> = {
           duration: 0.1,
           onComplete() {
             hitAnimation(receipent);
+            onComplete();
           },
         })
         .to(attacker.position, {
           x: attacker.position.x,
         });
     },
-    animateEnemyMove: ({ attacker, receipent }) => {
+    animateEnemyMove: ({ attacker, receipent, onComplete }) => {
       const tl = gsap.timeline();
       tl.to(attacker.position, {
         x: attacker.position.x + 20,
@@ -148,6 +151,7 @@ export const MoveDetailsJSON: Record<MoveList, MonsterMove> = {
           duration: 0.1,
           onComplete() {
             hitAnimation(receipent);
+            onComplete();
           },
         })
         .to(attacker.position, {

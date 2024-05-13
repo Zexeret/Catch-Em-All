@@ -18,7 +18,7 @@ export const MonsterDetailsJSON: Record<MonsterList, MonsterDetails> = {
     name: "Embery",
     frontAnimation: null,
     backAnimation: "../src/assets/images/embySprite.png",
-    health: 100,
+    health: 150,
     initialMoves: [MoveList.CUT, MoveList.TACKLE, MoveList.FIREBALL],
     spriteFrames: 4,
   },

@@ -1,4 +1,9 @@
-import { Coordinates, canvasCtx } from "../core";
+import {
+  Coordinates,
+  canvasCtx,
+  hideDialogueContainer,
+  showDialogueContainer,
+} from "../core";
 import {
   ALLY_BATTLE_POSITION,
   ENEMY_BATTLE_POSITION,
@@ -140,20 +145,26 @@ export class Monster extends battleStats {
       }
     });
   }
-  private attack(
+  private async attack(
     attacker: Monster,
     receipent: Monster,
     attackMove: Move
-  ): boolean {
+  ): Promise<boolean> {
     const animateMove = this.isAlly
       ? attackMove.animateAllyMove
       : attackMove.animateEnemyMove;
     const healthBar = document.querySelectorAll("#healthBar .greenHealthBar")[
       this.isAlly ? 0 : 1
     ];
+    const heathStat = document.querySelector(
+      `#${this.isAlly ? "enemyMonsterName" : "allyMonsterName"} ~ #healthStats`
+    );
+    isHTMLElement(heathStat)
+      ? (heathStat.innerHTML = `${receipent.battleHealth}/${receipent.health}`)
+      : null;
 
     if (animateMove) {
-      animateMove({
+      await animateMove({
         attacker: attacker,
         receipent: receipent,
         move: attackMove,
@@ -162,9 +173,16 @@ export class Monster extends battleStats {
       if (isHTMLElement(healthBar)) {
         receipent.battleHealth -= attackMove.rawDamage;
         if (receipent.battleHealth <= 0) {
+          isHTMLElement(heathStat)
+            ? (heathStat.innerHTML = `0/${receipent.health}`)
+            : null;
           healthBar.style.width = `0%`;
           return true;
         }
+
+        isHTMLElement(heathStat)
+          ? (heathStat.innerHTML = `${receipent.battleHealth}/${receipent.health}`)
+          : null;
         healthBar.style.width = `${
           (receipent.battleHealth / receipent.health) * 100
         }%`;
@@ -182,31 +200,33 @@ export class Monster extends battleStats {
     return false;
   }
 
-  static performAttack(
+  static async performAttack(
     attacker: Monster,
     receipent: Monster,
     attackIndex: number
   ) {
-    const allyTotalMoves = attacker.initialMoves.length;
-    if (allyTotalMoves < attackIndex + 1) {
-      console.log(
-        attacker.name,
-        "does not have",
-        attackIndex + 1,
-        "attack yet"
-      );
-      return;
-    }
+    return new Promise(async (resolve, reject) => {
+      const allyTotalMoves = attacker.initialMoves.length;
+      if (allyTotalMoves < attackIndex + 1) {
+        console.log(
+          attacker.name,
+          "does not have",
+          attackIndex + 1,
+          "attack yet"
+        );
+        return;
+      }
 
-    console.log(receipent.battleHealth);
-    const attackMove = attacker.initialMoves[attackIndex];
-    const enemyDefeated = attacker.attack(attacker, receipent, attackMove);
+      const attackMove = attacker.initialMoves[attackIndex];
+      showDialogueContainer(`${attacker.name} performed ${attackMove.name}`);
+      const enemyDefeated = attacker.attack(attacker, receipent, attackMove);
+      console.log(receipent.name, "health now is ", receipent.battleHealth);
 
-    if (enemyDefeated) {
-      console.log(attacker.name, "defeated", receipent.name);
-    }
+      setTimeout(() => {
+        hideDialogueContainer();
 
-    console.log(attackMove.name, "on", receipent.name, "performed");
-    return enemyDefeated;
+        resolve(enemyDefeated);
+      }, 3000);
+    });
   }
 }

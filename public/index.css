@@ -33,7 +33,7 @@ body {
 #healthBar {
     position: absolute;
     width: 250px;
-    height: 60px;
+    height: 65px;
     background: white;
     font-size: 10px;
     border: 2px solid black;
@@ -53,7 +53,7 @@ body {
     background: green;
     left: 0;
     transition: all 1s;
-    transition-delay: 0.5s;
+    transition-delay: 0s;
     /* This is incoporate time for aniation, maybe change it in js later according to different animations*/
     width: 100%;
 }
@@ -68,6 +68,10 @@ body {
     right: 60px;
 }
 
+#healthStats {
+    margin-top: 5px;
+    text-align: end;
+}
 
 .flashAnimation {
     /* animation: name duration timing-function delay iteration-count direction fill-mode; */
@@ -188,4 +192,18 @@ body {
     transform: scale(1.07);
     display: flex;
 
+}
+
+#dialogueContainer {
+    background-color: #f7f7f7;
+    /* z-index: 1; */
+    /* width: 200px; */
+    height: 150px;
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    left: 0;
+    padding: 20px;
+    box-sizing: border-box;
+    box-shadow: inset 0px 0px 8px 1px #878787;
 }

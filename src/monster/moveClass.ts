@@ -21,8 +21,8 @@ export class Move {
   spriteFrames: number;
   opacity: number;
   position: Coordinates;
-  animateAllyMove: (props: animateFunctionProps) => void;
-  animateEnemyMove: (props: animateFunctionProps) => void;
+  animateAllyMove: (props: animateFunctionProps) => Promise<string>;
+  animateEnemyMove: (props: animateFunctionProps) => Promise<string>;
 
   //required when drawing move sprites
   #image: HTMLImageElement = null;
@@ -56,47 +56,47 @@ export class Move {
     this.opacity = 1;
 
     this.animateAllyMove = move.animateAllyMove
-      ? (props) => {
-          let index = -1;
-          // adding sprite to draw on canvas
-          if (this.frontAnimation) {
-            index = Move.MoveSprites.push(props.move) - 1;
-            this.#image = this.frontAnimation;
-          }
+      ? (props) =>
+          new Promise((resolve) => {
+            let index = -1;
+            // adding sprite to draw on canvas
+            if (this.frontAnimation) {
+              index = Move.MoveSprites.push(props.move) - 1;
+              this.#image = this.frontAnimation;
+            }
 
-          this.position = { ...ALLY_BATTLE_POSITION };
+            this.position = { ...ALLY_BATTLE_POSITION };
 
-          move.animateAllyMove({
-            ...props,
-            onComplete: () => {
-              // removing sprite so that it doesnt draw on canvas
-              if (index === -1) return;
-
-              Move.MoveSprites.splice(index, 1);
-            },
-          });
-        }
+            move.animateAllyMove({
+              ...props,
+              onComplete: () => {
+                // removing sprite so that it doesnt draw on canvas
+                resolve("");
+                if (index !== -1) Move.MoveSprites.splice(index, 1);
+              },
+            });
+          })
       : null;
     this.animateEnemyMove = move.animateEnemyMove
-      ? (props) => {
-          let index = -1;
-          // adding sprite to draw on canvas
-          if (this.backAnimation) {
-            index = Move.MoveSprites.push(props.move) - 1;
-            this.#image = this.backAnimation;
-          }
-          this.position = { ...ENEMY_BATTLE_POSITION };
+      ? (props) =>
+          new Promise((resolve) => {
+            let index = -1;
+            // adding sprite to draw on canvas
+            if (this.backAnimation) {
+              index = Move.MoveSprites.push(props.move) - 1;
+              this.#image = this.backAnimation;
+            }
+            this.position = { ...ENEMY_BATTLE_POSITION };
 
-          move.animateEnemyMove({
-            ...props,
-            onComplete: () => {
-              // removing sprite so that it doesnt draw on canvas
-              if (index === -1) return;
-
-              Move.MoveSprites.splice(index, 1);
-            },
-          });
-        }
+            move.animateEnemyMove({
+              ...props,
+              onComplete: () => {
+                // removing sprite so that it doesnt draw on canvas
+                resolve("");
+                if (index !== -1) Move.MoveSprites.splice(index, 1);
+              },
+            });
+          })
       : null;
 
     this.#currentFrameNumber = 0;

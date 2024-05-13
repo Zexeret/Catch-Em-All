@@ -6,8 +6,86 @@ import { getSprites, loadSprites } from "./loadSprite";
 import { resumeTownAnimation } from "./startTownAnimation";
 
 let attackButtonFocusIndex = 0;
+let battleGroundAnimationController: AnimateOnCanvas;
+let controller: AbortController;
 let abortSignal: AbortSignal;
-let performAttack;
+let attackAllowed: boolean;
+
+export const showDialogueContainer = (message: string, timer: number = 0) => {
+  return new Promise((resolve) => {
+    const dialogueInterface = document.getElementById("dialogueContainer");
+    dialogueInterface.style.zIndex = "1";
+    dialogueInterface.innerHTML = message;
+
+    const attackInterface = document.getElementById("attackInterface");
+    attackInterface.classList.add("none-display");
+    attackAllowed = false;
+
+    setTimeout(() => {
+      resolve("");
+    }, timer);
+  });
+};
+
+export const hideDialogueContainer = () => {
+  const dialogueInterface = document.getElementById("dialogueContainer");
+  dialogueInterface.style.zIndex = "0";
+  dialogueInterface.innerHTML = "";
+
+  const attackInterface = document.getElementById("attackInterface");
+  attackInterface.classList.remove("none-display");
+  attackAllowed = true;
+
+  chaangeAttackButtonFocus({});
+};
+
+const performAllyAttack = async (
+  attacker: Monster,
+  receipent: Monster,
+  attackIndex: number
+) => {
+  if (!attackAllowed) return;
+  const enemyDefeated = await Monster.performAttack(
+    attacker,
+    receipent,
+    attackIndex
+  );
+
+  if (enemyDefeated) {
+    await showDialogueContainer(
+      `${receipent.name} defeated ${receipent.name}!!!`,
+      2000
+    );
+    await showDialogueContainer(`${receipent.name} fained.`, 2000);
+
+    exitBattleAnimation();
+  } else {
+    console.log(enemyDefeated, "performing enemy attack");
+    performEnemyAttack(receipent, attacker, 0);
+  }
+};
+
+const performEnemyAttack = async (
+  attacker: Monster,
+  receipent: Monster,
+  attackIndex: number
+) => {
+  const allyDefeated = await Monster.performAttack(
+    attacker,
+    receipent,
+    attackIndex
+  );
+
+  if (allyDefeated) {
+    await showDialogueContainer(
+      `${receipent.name} defeated ${receipent.name}!!!`,
+      2000
+    );
+    await showDialogueContainer(`${receipent.name} fained.`, 2000);
+
+    exitBattleAnimation();
+  }
+};
 
 const chaangeAttackButtonFocus = ({
   change,
@@ -32,14 +110,30 @@ const chaangeAttackButtonFocus = ({
   });
 };
 
+const exitBattleAnimation = () => {
+  {
+    controller.abort();
+    battleGroundAnimationController.stopAnimationRender();
+    setTimeout(() => {
+      fadeOut({
+        callbackFun: () => {
+          resumeTownAnimation();
+          hideBattleInterfaces();
+        },
+      });
+    }, 0);
+  }
+};
+
 export const startBattleAnimation = () => {
   attackButtonFocusIndex = 0;
+  attackAllowed = true;
   const { battleGroundSprite } = getSprites();
-  const controller = new AbortController();
+  controller = new AbortController();
   abortSignal = controller.signal;
 
-  const emby = new Monster(MonsterList.EMBERY);
-  const draggo = new Monster(MonsterList.DRAGGOG);
+  const ally = new Monster(MonsterList.EMBERY);
+  const enemy = new Monster(MonsterList.DRAGGOG);
 
   const handleAttackFocus = (event: KeyboardEvent) => {
     switch (event.code) {
@@ -53,7 +147,7 @@ export const startBattleAnimation = () => {
         break;
       case "Enter":
       case "Space":
-        performAttack(emby, draggo, attackButtonFocusIndex);
+        performAllyAttack(ally, enemy, attackButtonFocusIndex);
         break;
     }
   };
@@ -61,43 +155,20 @@ export const startBattleAnimation = () => {
   const drawBattleGround = () => {
     battleGroundSprite.draw();
 
-    draggo.drawEnemyMonster();
+    enemy.drawEnemyMonster();
     Move.MoveSprites.forEach((move) => move.draw());
-    emby.drawAllyMonster();
+    ally.drawAllyMonster();
   };
 
   window.addEventListener("keydown", handleAttackFocus, {
     signal: abortSignal,
   });
-  showBattleInterfaces(emby, draggo);
+  showBattleInterfaces(ally, enemy);
 
-  const battleGroundAnimationController = new AnimateOnCanvas(
-    FPS,
-    drawBattleGround
-  );
-
-  const performMoveAttack = (
-    attacker: Monster,
-    receipent: Monster,
-    attackIndex: number
-  ) => {
-    if (Monster.performAttack(attacker, receipent, attackIndex)) {
-      controller.abort();
-      setTimeout(() => {
-        battleGroundAnimationController.stopAnimationRender();
-        fadeOut({
-          callbackFun: () => {
-            resumeTownAnimation();
-            hideBattleInterfaces();
-          },
-        });
-      }, 3000);
-    }
-  };
-  performAttack = performMoveAttack;
+  battleGroundAnimationController = new AnimateOnCanvas(FPS, drawBattleGround);
 };
 
-const showBattleInterfaces = (emby: Monster, draggo: Monster) => {
+const showBattleInterfaces = (ally: Monster, enemy: Monster) => {
   // to show attack interface
   const attackInterface = document.getElementById("attackInterface");
   attackInterface.classList.remove("none-display");
@@ -108,13 +179,35 @@ const showBattleInterfaces = (emby: Monster, draggo: Monster) => {
     bar.classList.remove("none-display");
   });
 
+  //show dialogueInterface
+  const dialogueInterface = document.getElementById("dialogueContainer");
+  dialogueInterface.classList.remove("none-display");
+
+  //populate ally health Stats
+  const allyHeathStat = document.querySelector(
+    "#allyMonsterName ~ #healthStats"
+  );
+  isHTMLElement(allyHeathStat)
+    ? (allyHeathStat.innerHTML = `${ally.health}/${ally.health}`)
+    : null;
+  document.getElementById("allyMonsterName").innerHTML = ally.name;
+
+  //populate enemy health Stats
+  const enemyHeathStat = document.querySelector(
+    "#enemyMonsterName ~ #healthStats"
+  );
+  isHTMLElement(enemyHeathStat)
+    ? (enemyHeathStat.innerHTML = `${enemy.health}/${enemy.health}`)
+    : null;
+  document.getElementById("enemyMonsterName").innerHTML = enemy.name;
+
   // Add event listener on attack buttons
   const attackButton = document.querySelectorAll(".attackBar button");
   attackButton.forEach((button, index) => {
     button.addEventListener(
       "click",
       () => {
-        performAttack(draggo, emby, index);
+        performAllyAttack(ally, enemy, index);
       },
       { signal: abortSignal }
     );
@@ -137,7 +230,7 @@ const showBattleInterfaces = (emby: Monster, draggo: Monster) => {
   });
 
   // Sets initial focus on attack button
-  chaangeAttackButtonFocus({ index: 2 });
+  chaangeAttackButtonFocus({ index: attackButtonFocusIndex });
 };
 
 const hideBattleInterfaces = () => {
@@ -158,4 +251,9 @@ const hideBattleInterfaces = () => {
   isHTMLElement(greenHealthBars[1])
     ? (greenHealthBars[1].style.width = "100%")
     : null;
+
+  const dialogueInterface = document.getElementById("dialogueContainer");
+  dialogueInterface.classList.add("none-display");
+  dialogueInterface.style.zIndex = "0";
+  dialogueInterface.innerHTML = "";
 };
