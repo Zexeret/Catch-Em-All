@@ -19,15 +19,15 @@ export const MonsterDetailsJSON: Record<MonsterList, MonsterDetails> = {
     frontAnimation: null,
     backAnimation: "../src/assets/images/embySprite.png",
     health: 150,
-    initialMoves: [MoveList.CUT, MoveList.TACKLE, MoveList.FIREBALL],
+    initialMoves: [MoveList.WATERBALL, MoveList.TACKLE, MoveList.FIREBALL],
     spriteFrames: 4,
   },
   DRAGGOG: {
     name: "Draggog",
     frontAnimation: "../src/assets/images/draggleSprite.png",
     backAnimation: null,
-    health: 60,
-    initialMoves: [MoveList.FIREBALL, MoveList.TACKLE],
+    health: 200,
+    initialMoves: [MoveList.FIREBALL, MoveList.CUT, MoveList.WINEWHIP],
     spriteFrames: 4,
   },
 };

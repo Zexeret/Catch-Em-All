@@ -38,23 +38,23 @@ type typeCSS = {
 export const MonsterbaseTypeCSS: Record<MonsterBaseType, typeCSS> = {
   FIRE: {
     background: "#EA7A3C",
-    textColor: "white",
+    textColor: "#ffffff",
   },
   WATER: {
     background: "#539AE2",
-    textColor: "white",
+    textColor: "#ffffff",
   },
   GRASS: {
     background: "#71C558",
-    textColor: "white",
+    textColor: "#ffffff",
   },
   NORMAL: {
     background: "#00FFFFF",
-    textColor: "black",
+    textColor: "#000000",
   },
   GROUND: {
     background: "#CC9F4F",
-    textColor: "black",
+    textColor: "#000000",
   },
 };
 
@@ -75,6 +75,90 @@ const hitAnimation = (monster: Monster): void => {
 };
 
 export const MoveDetailsJSON: Record<MoveList, MonsterMove> = {
+  WATERBALL: {
+    name: "Water Ball",
+    type: MonsterBaseType.WATER,
+    rawDamage: 50,
+    frontAnimation: null,
+    backAnimation: null,
+    spriteFames: 4,
+    animateAllyMove: ({ attacker, receipent, onComplete }) => {
+      const tl = gsap.timeline();
+      tl.to(attacker.position, {
+        x: attacker.position.x - 20,
+      })
+        .to(attacker.position, {
+          x: attacker.position.x + 40,
+          duration: 0.1,
+          onComplete() {
+            hitAnimation(receipent);
+            onComplete();
+          },
+        })
+        .to(attacker.position, {
+          x: attacker.position.x,
+        });
+    },
+    animateEnemyMove: ({ attacker, receipent, onComplete }) => {
+      const tl = gsap.timeline();
+      tl.to(attacker.position, {
+        x: attacker.position.x + 20,
+      })
+        .to(attacker.position, {
+          x: attacker.position.x - 40,
+          duration: 0.1,
+          onComplete() {
+            hitAnimation(receipent);
+            onComplete();
+          },
+        })
+        .to(attacker.position, {
+          x: attacker.position.x,
+        });
+    },
+  },
+  WINEWHIP: {
+    name: "Wine Whip",
+    type: MonsterBaseType.GRASS,
+    rawDamage: 30,
+    frontAnimation: null,
+    backAnimation: null,
+    spriteFames: 4,
+    animateAllyMove: ({ attacker, receipent, onComplete }) => {
+      const tl = gsap.timeline();
+      tl.to(attacker.position, {
+        x: attacker.position.x - 20,
+      })
+        .to(attacker.position, {
+          x: attacker.position.x + 40,
+          duration: 0.1,
+          onComplete() {
+            hitAnimation(receipent);
+            onComplete();
+          },
+        })
+        .to(attacker.position, {
+          x: attacker.position.x,
+        });
+    },
+    animateEnemyMove: ({ attacker, receipent, onComplete }) => {
+      const tl = gsap.timeline();
+      tl.to(attacker.position, {
+        x: attacker.position.x + 20,
+      })
+        .to(attacker.position, {
+          x: attacker.position.x - 40,
+          duration: 0.1,
+          onComplete() {
+            hitAnimation(receipent);
+            onComplete();
+          },
+        })
+        .to(attacker.position, {
+          x: attacker.position.x,
+        });
+    },
+  },
   TACKLE: {
     name: "Tackle",
     type: MonsterBaseType.GROUND,
@@ -119,7 +203,7 @@ export const MoveDetailsJSON: Record<MoveList, MonsterMove> = {
   },
   CUT: {
     name: "Cut",
-    type: MonsterBaseType.WATER,
+    type: MonsterBaseType.NORMAL,
     rawDamage: 20,
     frontAnimation: null,
     backAnimation: null,
@@ -162,7 +246,7 @@ export const MoveDetailsJSON: Record<MoveList, MonsterMove> = {
   FIREBALL: {
     name: "Fireball",
     type: MonsterBaseType.FIRE,
-    rawDamage: 30,
+    rawDamage: 40,
     frontAnimation: "../src/assets/images/fireball.png",
     backAnimation: "../src/assets/images/fireball.png",
     spriteFames: 4,
@@ -197,4 +281,6 @@ export enum MoveList {
   TACKLE = "TACKLE",
   CUT = "CUT",
   FIREBALL = "FIREBALL",
+  WINEWHIP = "WINEWHIP",
+  WATERBALL = "WATERBALL",
 }

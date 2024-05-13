@@ -139,6 +139,9 @@ export class Monster extends battleStats {
 
           //populate type in <span> tag
           moveTypeSpan.innerHTML = move.type;
+          if (isHTMLElement(moveTypeSpan)) {
+            moveTypeSpan.style.color = `${moveTypeCSS.textColor}33`;
+          }
         }
       } else {
         throw new Error("Not an HTML Element");

@@ -39,6 +39,11 @@ export const hideDialogueContainer = () => {
   chaangeAttackButtonFocus({});
 };
 
+const getRandomAttackIndex = (attacker: Monster) => {
+  const attackMoveLength = attacker.initialMoves.length;
+  return Math.floor(Math.random() * attackMoveLength);
+};
+
 const performAllyAttack = async (
   attacker: Monster,
   receipent: Monster,
@@ -61,7 +66,9 @@ const performAllyAttack = async (
     exitBattleAnimation();
   } else {
     console.log(enemyDefeated, "performing enemy attack");
-    performEnemyAttack(receipent, attacker, 0);
+
+    const enemyAttackIndex = getRandomAttackIndex(receipent);
+    performEnemyAttack(receipent, attacker, enemyAttackIndex);
   }
 };
 
